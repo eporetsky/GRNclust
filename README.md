@@ -10,7 +10,7 @@ A streamlined and reproducible Snakemake workflow for batch-correcting RNA-seq g
 1. Clone the repository:
    ```
    bash
-   git clone https://github.com/yourusername/GRNclust.git
+   git clone https://github.com/eporetsky/GRNclust.git
    cd GRNclust
    ```
 
@@ -18,24 +18,15 @@ A streamlined and reproducible Snakemake workflow for batch-correcting RNA-seq g
     ```
     conda env create -f environment.yml
     conda activate grnclust
-    bash post-install.sh # fixes an issue with GRNboost2
+    
+    # fixes an issue with GRNboost2
+    bash post-install.sh 
+    
+    # arboreto core.py uses 1 thread by default, replace with N
+    bash post-threads.sh N
     ```
 
 * Note: If you still get `TypeError: Must supply at least one delayed object` with GRNboost2, read the my comments in `post-install.sh`.
-
-### Using Docker (not implmented yet)
-
-1. Build the Docker image:
-    ```
-    bash
-    docker build -t grnclust .
-    ```
-
-2. Run the pipeline:
-    ```
-    bash
-    docker run -v $(pwd):/app grnclust
-    ```
 
 ---
 
@@ -57,13 +48,21 @@ The workflow consists of the following steps:
 
 ---
 
-## Command to Run the Workflow
+## Command to Run the workflow
 
-To execute the workflow, use the following command:
+To execute the workflow on multiple count files with batch correction use the following command:
 
 ```bash
 python -m snakemake --cores 1 --config input_folder=example output_folder=example tf_file=example/AtCol-0.ptfdb.tsv resolution=0.1 threads=12
 ```
+
+## Run GRN analysis on a single expression file
+
+```bash
+python scripts/run_grnboost2.py --expression_file acc.cpm.tsv.gz \
+                                --tf_file genotype.ptfdb.tsv \
+                                --output_file acc.grn.tsv
+````
 
 ---
 
@@ -124,26 +123,6 @@ The workflow accepts the following arguments via the `--config` option:
 | `tf_file`         | Path to the transcription factor list file (e.g., `example/AtCol-0.ptfdb.tsv`). |
 | `resolution`      | Resolution parameter for Leiden clustering (e.g., `0.1`).                 |
 | `threads`         | Number of threads to use for parallel processing (e.g., `12`).            |
-
----
-
-## Example Workflow Execution
-
-### Run the Workflow**:
-   ```bash
-   python -m snakemake --cores 1 --config input_folder=example output_folder=example tf_file=example/AtCol-0.ptfdb.tsv resolution=0.1 threads=12
-   ```
-
-### Output Files
-
-1. **Preprocessing**:
-   - `example/expression.batch.logscale.tsv`: Batch-corrected and normalized expression matrix.
-
-2. **GRN Inference**:
-   - `example/complete_grn.csv`: Inferred gene regulatory network.
-
-3. **Leiden Clustering**:
-   - `example/filtered_grn_within_clusters_res0.1.csv`: Filtered GRN with edges retained only within clusters.
 
 ---
 
