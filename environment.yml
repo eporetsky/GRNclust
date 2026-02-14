@@ -1,19 +1,14 @@
-name: grnclust
+name: robustgrn
 channels:
   - conda-forge
   - bioconda
 dependencies:
   - python=3.9
-  - r-base=4.2
-  - r-r.utils=2.12.3
-  - r-data.table=1.15.4
-  - r-dplyr=1.1.4
-  - bioconductor-sva=3.46.0
-  - r-biocmanager=1.30.23
-  - snakemake
   - pip
+  - clusterone=1.0
   - pip:
-      - arboreto==0.1.6
-      - pandas==2.2.3
-      - igraph==0.11.8
-      - leidenalg==0.10.2
+      - click
+      - mutclust
+      - pyrra         # grn.batch.py: PyRRA rank aggregation
+      - statsmodels  # grn.batch.py: per-TF FDR (multipletests fdr_bh)
+      #- -e .
